@@ -1,0 +1,155 @@
+// filepath: /home/neo/quantum.dev/copilot-prompt.txt
+// ==================================================================================
+// Copilot Prompt: Construct a zero-latency, quantum-AI-powered, full-stack development singularity at ~/projects/quantum.dev.
+// ==================================================================================
+// 🧠 Quantum.dev is NOT a typical dev project. It’s the anti-loveable.dev — a hyper-intelligent workspace designed to emulate a blackhole development paradigm:
+// → Zero local model storage
+// → Infinite inference depth via Hugging Face API (HF_TOKEN)
+// → Ultra-light, ultra-reactive, zero-gravity runtime (under 100MB RAM)
+// → Designed to self-generate complete applications from human prompts, modularly.
+
+// ==================================================================================
+// 📦 Folder Structure (Singularity Layout):
+// ==================================================================================
+// quantum.dev/
+// ├── backend/               ← FastAPI microservice brain
+// │   ├── main.py            ← POST /generate endpoint using HuggingFace API
+// │   ├── .env               ← Contains HF_TOKEN
+// │   ├── requirements.txt   ← Minimal, pip-installable deps
+// │   └── Procfile           ← Heroku-style deploy script
+// ├── frontend/              ← Blackhole-themed UI
+// │   ├── index.html         ← Full black, monospace glow UI, Tailwind via CDN
+// │   └── script.js          ← Native fetch(), error-handling, inference pipeline
+// ├── vercel.json            ← Static frontend deploy + optional rewrites
+// ├── replit.nix             ← Runtime config for Python + JS frontend
+// ├── .gitignore             ← Clean cache + hide secrets
+// ├── README.md              ← Setup & usage guide
+// └── copilot-prompt.txt     ← (this file) Quantum-AI Copilot Controller
+
+// ==================================================================================
+// 🔥 Backend: FastAPI (quantum.dev/backend)
+// ==================================================================================
+// main.py:
+// - Run on http://localhost:8000
+// - Endpoint: POST /generate
+//   ↪ Input: JSON { "prompt": "your text" }
+//   ↪ Read HF_TOKEN from .env
+//   ↪ Call Hugging Face Inference API (text generation model, e.g. gpt2, mistral)
+//   ↪ Return JSON response { "result": "...AI completion..." }
+// - Full CORS enabled for dev and frontend access
+// - Use FastAPI + requests + python-dotenv
+// - Must support hot reload: `python3 -m uvicorn main:app --reload`
+// - Include try/except to gracefully handle API failures or rate limits
+
+// .env:
+// - Format:
+//   HF_TOKEN=your_huggingface_api_key
+
+// requirements.txt:
+// - fastapi
+// - uvicorn
+// - python-dotenv
+// - requests
+
+// Procfile (Heroku style):
+// web: uvicorn main:app --host=0.0.0.0 --port=${PORT:-8000}
+
+// ==================================================================================
+// 🪐 Frontend: Native JS + TailwindCSS (quantum.dev/frontend)
+// ==================================================================================
+// index.html:
+// - Theme: Pure black background (#000000), glowing text (neon green/blue)
+// - Typography: Monospace, futuristic tech font
+// - Responsive input: prompt box + animated submit button
+// - Result display container: shows AI-generated output with soft fade-in
+// - CDN: TailwindCSS
+
+// script.js:
+// - `DOMContentLoaded` listener
+// - Event listener on submit
+// - Send fetch() POST to http://localhost:8000/generate
+//   ↪ Headers: { "Content-Type": "application/json" }
+//   ↪ Body: { prompt: userInput.value }
+// - Display loader/spinner during fetch
+// - Update DOM with AI response or show graceful error
+
+// ==================================================================================
+// 🧪 Local Dev Environment (MacBook Air 6.2 / Xubuntu 24.10)
+// ==================================================================================
+// .gitignore:
+// - __pycache__/
+// - .env
+// - .DS_Store (macOS)
+
+// README.md:
+// - Setup:
+//   1. `git clone https://github.com/yourname/quantum.dev`
+//   2. `cd backend && nano .env` → add HF_TOKEN
+//   3. `pip install -r requirements.txt`
+//   4. Run: `python3 -m uvicorn main:app --reload`
+//   5. Open `frontend/index.html` in browser
+//   6. Type prompt → Receive real-time AI-generated outputs
+
+// replit.nix:
+// - Configures Python + JS frontend runtime
+// - Supports hot reload and minimal system RAM
+
+// vercel.json:
+// {
+//   "rewrites": [{ "source": "/api/(.*)", "destination": "http://localhost:8000/$1" }],
+//   "cleanUrls": true
+// }
+
+// ==================================================================================
+// 🔁 Flow of Data (Quantum Inference Pipeline)
+// ==================================================================================
+// User types prompt on frontend → JS fetch() sends to FastAPI POST /generate
+// FastAPI reads .env HF_TOKEN → uses requests to hit Hugging Face model endpoint
+// Hugging Face returns AI completion → FastAPI returns JSON → frontend updates UI
+// No local model → Zero delay architecture → Works with gpt2, mistral, starcoder, etc.
+
+// ==================================================================================
+// 🚀 Deployment Matrix (All Free Tier & Portable)
+// ==================================================================================
+// ✅ GitHub Pages → Static frontend (frontend/index.html only)
+// ✅ Replit → Full backend+frontend served in browser with live dev console
+// ✅ Vercel → Frontend static + backend serverless functions (FastAPI with API routes)
+// Optional: Add `monaco-editor` for code-gen or editable UIs
+
+// ==================================================================================
+// 💡 Bonus Enhancements (Optional Later Phases)
+// ==================================================================================
+// - Add `Monaco Editor` panel to turn AI output into editable code
+// - Add HuggingFace model selector dropdown (gpt2, mistral, etc.)
+// - Add retry logic + rate-limit notification
+// - Add keyboard shortcuts for prompt submit
+// - Add service worker for offline access fallback
+// - Add speech-to-text using Web Speech API
+
+// ==================================================================================
+// 🌀 Blackhole Dev Philosophy (Quantum.dev Core Ethos)
+// ==================================================================================
+// - No local model weights or heavy ML deps
+// - Everything flows through Hugging Face APIs
+// - Ultra-light memory (ideal for 8GB RAM, 120GB disk)
+// - Works out of the box in low-spec systems, VMs, or cloud IDEs
+// - From input prompt to AI app idea in under 1 second
+// - Copilot should auto-generate every file from this blueprint, modularly
+
+// ==================================================================================
+// 🧠 Mindset:
+// You’re not coding — you’re architecting inside a blackhole where thought = app.
+// This is not loveable.dev — it’s **quantum.dev**.
+// Light-speed architecture. Zero-gravity interfaces. Blackhole-level inference.
+// ==================================================================================
+
+// Let GitHub Copilot now generate:
+// - backend/main.py
+// - frontend/index.html
+// - frontend/script.js
+// - backend/.env (not committed)
+// - README.md
+// - vercel.json
+// - replit.nix
+
+// Begin construction, Copilot. 👁️‍🗨️🕳️✨

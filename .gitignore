@@ -1,0 +1,8 @@
+# Ignore Python virtualenv
+venv/
+__pycache__/
+*.pyc
+
+# Node/Vercel stuff (optional)
+node_modules/
+.env

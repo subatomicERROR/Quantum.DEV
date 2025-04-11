@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "frontend/index.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    { "src": "/(.*)", "dest": "/index.html" }
+  ],
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "http://localhost:8000/$1" }
+  ],
+  "cleanUrls": true
+}
