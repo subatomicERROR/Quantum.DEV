@@ -4,172 +4,226 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Quantum.dev Console</title>
+
+  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400&display=swap" rel="stylesheet">
+
+  <!-- Terminal CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm/css/xterm.css" />
+
+  <!-- Editor Loader -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.38.0/min/vs/loader.min.js"></script>
+
   <style>
     * {
       box-sizing: border-box;
     }
 
     body {
-      background: radial-gradient(circle at top, #000000 10%, #0a0a0a 100%);
-      color: #00ffc8;
-      font-family: 'Poppins', sans-serif;
       margin: 0;
       padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
+      font-family: 'Poppins', sans-serif;
+      background: radial-gradient(circle at top, #000000 10%, #0a0a0a 100%);
+      color: #00ffc8;
       overflow: hidden;
     }
 
-    .container {
-      background: rgba(0, 0, 0, 0.7);
-      border: 1px solid rgba(0, 255, 255, 0.2);
-      backdrop-filter: blur(20px);
-      border-radius: 24px;
-      padding: 2rem;
-      width: 92%;
-      max-width: 700px;
-      box-shadow: 0 0 40px rgba(0, 255, 255, 0.2), 0 0 10px rgba(255, 0, 255, 0.1);
-      transition: all 0.3s ease-in-out;
-      animation: fadeIn 1.2s ease;
+    #app-container {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      height: 100vh;
     }
 
-    .container:hover {
-      transform: scale(1.01);
-      box-shadow: 0 0 60px rgba(0, 255, 255, 0.3);
-    }
-
-    h1 {
-      text-align: center;
-      font-size: 2rem;
-      color: #00ffee;
-      margin-bottom: 1.5rem;
-      text-shadow: 0 0 10px #00ffe1;
-    }
-
-    form {
+    /* Left Panel: Chat */
+    #left-panel {
       display: flex;
       flex-direction: column;
+      padding: 1rem;
       gap: 1rem;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(12px);
+      border-right: 1px solid rgba(0,255,255,0.1);
+      overflow: hidden;
     }
 
-    input[type="text"] {
+    #chat-window {
+      flex: 1;
+      background: rgba(0,255,255,0.05);
+      border: 1px solid rgba(0,255,255,0.1);
+      border-radius: 12px;
       padding: 1rem;
-      background: #111111;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+      box-shadow: inset 0 0 10px rgba(0,255,255,0.05);
+    }
+
+    #user-prompt {
+      padding: 1rem;
+      font-size: 1rem;
+      background: #111;
+      color: #00ffc8;
       border: 2px solid #00ffc8;
-      color: #00ffc8;
       border-radius: 12px;
-      font-size: 1rem;
-      transition: all 0.2s ease-in-out;
-    }
-
-    input[type="text"]:focus {
       outline: none;
+      transition: 0.2s;
+    }
+    #user-prompt:focus {
       border-color: magenta;
-      background-color: #1a1a1a;
+      background: #1a1a1a;
     }
 
-    button {
+    /* Right Panel: Editor + Terminal */
+    #right-panel {
+      display: flex;
+      flex-direction: column;
       padding: 1rem;
-      background: linear-gradient(135deg, cyan, magenta);
-      border: none;
-      color: black;
-      font-weight: bold;
-      font-size: 1rem;
+      gap: 1rem;
+      overflow: hidden;
+    }
+    #editor-box, #terminal-box {
+      flex: 1;
       border-radius: 12px;
-      cursor: pointer;
-      transition: all 0.3s ease-in-out;
+      overflow: hidden;
+      margin-bottom: 1rem;
+    }
+    #editor-box {
+      border: 1px solid rgba(0,255,255,0.15);
+    }
+    #terminal-box {
+      background: black;
+      border: 1px solid rgba(0,255,255,0.1);
     }
 
-    button:hover {
-      background: linear-gradient(135deg, magenta, cyan);
-      box-shadow: 0 0 12px cyan;
-    }
-
-    #result {
-      margin-top: 1.5rem;
-      padding: 1rem;
-      background: rgba(0, 255, 255, 0.05);
-      border: 1px solid rgba(0, 255, 255, 0.1);
-      border-radius: 10px;
-      font-size: 1rem;
-      color: #00ffc8;
-      min-height: 80px;
+    .message {
+      margin-bottom: 0.75rem;
+      line-height: 1.4;
       white-space: pre-wrap;
-      line-height: 1.5;
     }
+    .user { color: #00ffee; }
+    .bot { color: #ff00ff; }
 
-    footer {
-      margin-top: 2rem;
-      text-align: center;
-      font-size: 0.75rem;
-      color: #555;
+    /* WebSocket Response Style */
+    .ws-response {
+      color: #00ffcc;
+      background-color: #111827;
+      padding: 8px 12px;
+      border-left: 4px solid #00ffcc;
+      margin-bottom: 6px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.95rem;
+      animation: fadeIn 0.4s ease-in;
+      border-radius: 4px;
     }
-
+    /* HTTP Response Style */
+    .http-response {
+      color: #93c5fd;
+      background-color: #1e293b;
+      padding: 8px 12px;
+      border-left: 4px solid #3b82f6;
+      margin-bottom: 6px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.95rem;
+      animation: fadeIn 0.4s ease-in;
+      border-radius: 4px;
+    }
     @keyframes fadeIn {
-      0% { opacity: 0; transform: translateY(20px); }
-      100% { opacity: 1; transform: translateY(0); }
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    @media screen and (max-width: 480px) {
-      .container {
-        padding: 1rem;
+    @media screen and (max-width: 768px) {
+      #app-container {
+        grid-template-columns: 1fr;
       }
-
-      input, button {
-        font-size: 0.9rem;
+      #editor-box, #terminal-box {
+        height: 200px;
       }
     }
   </style>
 </head>
+
 <body>
-  <div class="container">
-    <h1>⚛️ Quantum.dev Console</h1>
-    <form id="prompt-form">
-      <input type="text" id="prompt" placeholder="Ask the Quantum Realm..." required />
-      <button type="submit">Generate</button>
-    </form>
-    <div id="result">🤖 Awaiting quantum signal...</div>
-    <footer>crafted by <strong>subatomicERROR</strong> • 2025</footer>
+  <div id="app-container">
+    <!-- Left Panel: Chat -->
+    <div id="left-panel">
+      <div id="chat-window">
+        <div class="message bot">🤖 Awaiting quantum signal...</div>
+      </div>
+      <input type="text" id="user-prompt" placeholder="Ask Quantum.dev..." />
+    </div>
+
+    <!-- Right Panel: Editor + Terminal -->
+    <div id="right-panel">
+      <div id="editor-box"></div>
+      <div id="terminal-box"></div>
+    </div>
   </div>
 
+  <!-- Terminal Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/xterm/lib/xterm.min.js"></script>
+  
+  <!-- Monaco Editor Initialization -->
   <script>
-    const form = document.getElementById("prompt-form");
-    const resultBox = document.getElementById("result");
-
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const prompt = document.getElementById("prompt").value;
-
-      resultBox.textContent = "⏳ Connecting to Quantum Field...";
-      try {
-        const response = await fetch("http://127.0.0.1:8000/generate", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt })
-        });
-
-        const data = await response.json();
-        resultBox.textContent = "";
-
-        if (data.result) {
-          typeWriter(data.result, 0);
-        } else {
-          resultBox.textContent = "⚠️ Quantum silence... No valid response.";
-        }
-      } catch (err) {
-        resultBox.textContent = "🚫 Quantum field unreachable.";
-      }
+    require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.38.0/min/vs' }});
+    require(['vs/editor/editor.main'], function () {
+      monaco.editor.create(document.getElementById('editor-box'), {
+        value: "// Welcome to Quantum.dev\n",
+        language: "javascript",
+        theme: "vs-dark",
+        automaticLayout: true
+      });
     });
 
-    function typeWriter(text, i) {
-      if (i < text.length) {
-        resultBox.textContent += text.charAt(i);
-        setTimeout(() => typeWriter(text, i + 1), 20);
-      }
+    // Terminal Initialization
+    const term = new Terminal({ theme: { background: '#000000' } });
+    term.open(document.getElementById('terminal-box'));
+    term.writeln('🧪 Quantum Terminal Initialized...');
+  </script>
+
+  <!-- Chat Logic Script -->
+  <script>
+    // Chat message appender helper
+    function appendMessage(text, type) {
+      const p = document.createElement("p");
+      p.textContent = (type === 'ws' ? "[🔁 AI Real-Time]: " : "[📡 AI HTTP]: ") + text;
+      p.className = (type === 'ws') ? "ws-response" : "http-response";
+      document.getElementById("chat-window").appendChild(p);
+      document.getElementById("chat-window").scrollTop = document.getElementById("chat-window").scrollHeight;
     }
+
+    // Event listener for Enter key on user prompt
+    document.getElementById("user-prompt").addEventListener("keydown", async function(e) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        const userInput = e.target.value.trim();
+        if (!userInput) return;
+        // Append user message
+        const userMsg = document.createElement("div");
+        userMsg.className = "message user";
+        userMsg.textContent = "🧑‍🚀 " + userInput;
+        document.getElementById("chat-window").appendChild(userMsg);
+        document.getElementById("chat-window").scrollTop = document.getElementById("chat-window").scrollHeight;
+        e.target.value = "";
+
+        // Send prompt via HTTP POST
+        try {
+          const response = await fetch("http://127.0.0.1:8000/generate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt: userInput })
+          });
+          if (!response.ok) {
+            const errorData = await response.json();
+            appendMessage(errorData.detail || "No response received.", "http");
+            return;
+          }
+          const data = await response.json();
+          appendMessage(data.result || "No result received.", "http");
+        } catch (err) {
+          appendMessage("Error: " + err.message, "http");
+        }
+      }
+    });
   </script>
 </body>
 </html>

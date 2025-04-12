@@ -1,4 +1,3 @@
-// filepath: /home/neo/quantum.dev/copilot-prompt.txt
 // ==================================================================================
 // Copilot Prompt: Construct a zero-latency, quantum-AI-powered, full-stack development singularity at ~/projects/quantum.dev.
 // ==================================================================================
@@ -40,6 +39,49 @@
 // - Use FastAPI + requests + python-dotenv
 // - Must support hot reload: `python3 -m uvicorn main:app --reload`
 // - Include try/except to gracefully handle API failures or rate limits
+
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+import requests
+import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
+HF_TOKEN = os.getenv("HF_TOKEN")
+
+if not HF_TOKEN:
+    raise ValueError("HF_TOKEN is not set in the .env file")
+
+app = FastAPI()
+
+# Enable CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+class Prompt(BaseModel):
+    prompt: str
+
+@app.post("/generate")
+async def generate(prompt: Prompt):
+    try:
+        headers = {"Authorization": f"Bearer {HF_TOKEN}"}
+        payload = {"inputs": prompt.prompt}
+        response = requests.post(
+            "https://api-inference.huggingface.co/models/gpt2", 
+            headers=headers, 
+            json=payload
+        )
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 // .env:
 // - Format:
@@ -153,3 +195,4 @@
 // - replit.nix
 
 // Begin construction, Copilot. 👁️‍🗨️🕳️✨
+
